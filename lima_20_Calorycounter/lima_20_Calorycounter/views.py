@@ -6,6 +6,9 @@ from django.contrib import messages
 from django.contrib.auth.hashers import check_password
 from caloryApp.forms import*
 from datetime import date
+from decimal import Decimal
+from django.utils import timezone
+from django.db.models import Sum
 
 
 def signin_page(request):
@@ -91,8 +94,50 @@ def change_pass(request):
 
 # home_page
 def home_page(request):
+    current_user = request.user
+    today = date.today()
 
-    return render(request,"home.html")
+    calori_entry_item = CalorieEntryModel.objects.all()
+    total_calori_data = totalCalorieModel.objects.all()
+
+    # Set default values
+    weight = height = age = BMR = 0
+    gender = ''
+    
+    # Safely get user profile
+    profile = getattr(current_user, 'profile_user', None)
+    
+    if profile:
+        weight = profile.weight_kg
+        height = profile.height_cm
+        age = profile.age
+        gender = profile.gender
+
+        if weight and height and age:
+            if gender.lower() == 'male':
+                BMR = 66.47 + (13.75 * weight) + (5.003 * height) - (6.755 * age)
+            else:
+                BMR = 655.1 + (9.563 * weight) + (1.850 * height) - (4.676 * age)
+
+    BMR = round(BMR, 2)
+
+    # Fetch today's calorie entries
+    today_calori_comsum = CalorieEntryModel.objects.filter(user=current_user, date=today)
+    total_consumed = today_calori_comsum.aggregate(total=Sum('calories_consumed'))['total'] or 0
+
+    remainig = round(BMR - total_consumed, 2)
+
+    context = {
+        'calori_entry_item': calori_entry_item,
+        'total_calori_data': total_calori_data,
+        'BMR': BMR,
+        'today_calori_comsum': today_calori_comsum,
+        'remainig': remainig,
+        'total_consumed': total_consumed,
+    }
+    return render(request,"home.html",context)
+
+
 
 
 # profile
@@ -132,8 +177,30 @@ def add_calori(request):
                 user = request.user,
                 total_Calorie = calori_form.calories_consumed,
             )
+            return redirect('home_page')
+    
     else:
         calori_form = CalorieEntryForm()
 
     return render(request,"add_calori.html" , {'calori_form': calori_form})
 
+
+
+
+
+
+def update_calorie(request, id):
+    entry = CalorieEntryModel.objects.get(id=id)
+    if request.method == 'POST':
+        form = CalorieEntryForm(request.POST, instance=entry)
+        if form.is_valid():
+            form.save()
+            return redirect('home_page')
+    else:
+        form = CalorieEntryForm(instance=entry)
+    return render(request, 'update_calorie.html', {'form': form})
+    
+
+def delete_calorie(request, id):
+    CalorieEntryModel.objects.filter(id=id).delete()
+    return redirect('home_page')

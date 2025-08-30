@@ -42,4 +42,5 @@ class totalCalorieModel(models.Model):
     total_Calorie= models.PositiveIntegerField(null=True)
     date = models.DateField(auto_now_add=True)
 
+
     

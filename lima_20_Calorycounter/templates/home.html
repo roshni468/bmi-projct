@@ -3,20 +3,112 @@
 
 {% block body %}
 
-<div class="container">
+  <div class="container">
   <div class="row mt-4">
-    <div class="col-lg-4 col-md-4 col-sm-4">
+
+    <div class="col-lg-4 col-md-4 col-sm-6">
       <div class="card bg-warning">
-        <div class="card-">
+        <div class="card-body">
+          <h5 class="text-center"><b>{{ today_calori_comsum.total_Calorie }} kcal</b></h5>
+
+          <p class="text-center">Today consumed calorie</p>
 
         </div>
-         
       </div>
+    </div>
 
+    <div class="col-lg-4 col-md-4 col-sm-6">
+      <div class="card bg-warning">
+        <div class="card-body">
+          <h5 class="text-center"><b>{{BMR}}kcal</b></h5>
+          <p class="text-center">required calories</p>
+
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-lg-4 col-md-4 col-sm-6">
+      <div class="card bg-warning">
+        <div class="card-body">
+          {% if remainig < 0 %}
+          <h5 class="text-center"><b>{{remainig }}kcal</b></h5>
+          <p class="text-center">Extra calorie</p>
+          {% else %}
+          <h5 class="text-center"><b>{{remainig }}kcal</b></h5>
+          <p class="text-center">Remainig calorie</p>
+          {% endif %}
+
+        </div>
+      </div>
     </div>
 
   </div>
 
+</div>
+  
+
+  <div class="grey-bg container-fluid mt-3">
+    <h1 class= text-center>consumed Iteam list</h1>
+    <div><a href="{% url 'add_calori' %}" class="btn btn-primary">Add New Entry</a></div>
+<div class="table-responsive">
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Item Name</th>
+      <th scope="col">Calories</th>
+      <th scope="col">Date</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for entry in calori_entry_item %}
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{ entry.item_name }}</td>
+      <td>{{ entry.calories_consumed }}</td>
+      <td>{{ entry.date }}</td>
+      <td>
+        <a href="{% url 'update_calorie' entry.id %}" class="btn btn-warning btn-sm">Edit</a>
+        <a href="{% url 'delete_calorie' entry.id %}" class="btn btn-danger btn-sm">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+     
+</div>
+</div>
+
+  <div class="grey-bg container-fluid mt-3">
+    <h1 class= text-center>Total Consumed</h1>
+
+<div class="table-responsive">
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+
+
+      <th scope="col">Date</th>
+      <th scope="col">Total Earn</th>
+      
+      
+    </tr>
+  </thead>
+  <tbody>
+    {% for entry in total_calori_data %}
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{ entry.date }}</td>
+      <td>{{ entry.total_Calorie }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+     
+</div>
 </div>
   
  

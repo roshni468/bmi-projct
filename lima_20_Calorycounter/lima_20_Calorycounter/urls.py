@@ -28,5 +28,8 @@ urlpatterns = [
     path('profile_page',profile_page, name="profile_page"),
     path('update_profile',update_profile, name="update_profile"),
     path('add_calori',add_calori, name="add_calori"),
+    path('delete_calorie/delete/<int:id>/', delete_calorie, name='delete_calorie'),
+    path('update_calorie/edit/<int:id>/', update_calorie, name='update_calorie'),
+
 
 ]
