@@ -1,0 +1,15 @@
+
+{% extends "master.html" %}
+
+{% block body %}
+ <div class="card" style="width: 18rem;">
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">Name:{{request.user.profile_user.name}}</li>
+    <li class="list-group-item">age:{{request.user.profile_user.age}}</li>
+    <li class="list-group-item">height_cm:{{request.user.profile_user.height_cm}}</li>
+    <li class="list-group-item">weight_kg:{{request.user.profile_user.weight_kg}}</li>
+  </ul>
+  <a href="{% url "update_profile" %}" class="btn btn-primary">Update profile</a>
+</div>
+ 
+{% endblock body %}
